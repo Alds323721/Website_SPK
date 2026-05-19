@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1d1d1f;
+  --color-canvas-parchment: #f5f5f7;
+  --color-surface-pearl: #fafafc;
+  --color-primary: #0066cc;
+  --color-surface-black: #000000;
+  --shadow-product-snap: rgba(0, 0, 0, 0.22) 3px 5px 30px;
+}
