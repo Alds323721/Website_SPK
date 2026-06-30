@@ -1,45 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-canvas-parchment/80 border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex-shrink-0 flex items-center gap-2">
-            <img src="/src/assets/icons/logo-spk-light.png" alt="Logo SPK" className="h-10 w-auto" onError={(e) => e.target.style.display = 'none'} />
-            <span className="font-bold text-ink text-xl tracking-tight">SPK Developer</span>
-          </div>
-          <div className="hidden md:flex items-center space-x-4">
-            <a href="#kriteria" className="text-ink hover:text-primary transition-colors font-medium">Kriteria</a>
-            <a href="#simulasi" className="text-ink hover:text-primary transition-colors font-medium">Simulasi</a>
-            <a href="/admin" className="px-5 py-2.5 rounded-full bg-ink text-surface-pearl hover:bg-gray-800 transition-colors font-semibold shadow-sm">Login Admin</a>
-          </div>
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-ink hover:text-primary focus:outline-none p-2">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
+    <nav className="h-[72px] bg-white flex items-center px-6 md:px-12 justify-between font-sans border-b border-[#e0e0e0] sticky top-0 z-50">
+      <div className="flex items-center gap-3">
+        <img 
+          src="/src/assets/icons/logo-spk.png" 
+          alt="Logo SPK" 
+          className="h-8 w-auto" 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://via.placeholder.com/32x32?text=Logo";
+          }} 
+        />
+        <span className="font-bold text-[22px] tracking-tight text-[#1d1d1f]">SPK Developer</span>
       </div>
       
-      {/* Mobile Menu Dropdown */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-b border-gray-200 absolute w-full shadow-lg">
-          <div className="px-4 pt-2 pb-6 space-y-3">
-            <a href="#kriteria" className="block px-3 py-3 text-ink hover:text-primary hover:bg-gray-50 rounded-lg transition-colors font-medium" onClick={() => setIsOpen(false)}>Kriteria</a>
-            <a href="#simulasi" className="block px-3 py-3 text-ink hover:text-primary hover:bg-gray-50 rounded-lg transition-colors font-medium" onClick={() => setIsOpen(false)}>Simulasi</a>
-            <a href="/admin" className="block px-3 py-3 text-primary font-bold hover:bg-blue-50 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>Login Admin</a>
-          </div>
-        </div>
-      )}
+      <div className="flex items-center gap-8">
+        <a 
+          href="#kriteria" 
+          className="hidden md:block text-[#1d1d1f] hover:text-[#0066cc] font-medium transition-colors text-[16px]"
+        >
+          Kriteria
+        </a>
+        <Link 
+          to="/login" 
+          className="bg-[#0066cc] text-white px-6 py-2.5 rounded-full font-medium hover:bg-[#0055b3] transition-colors text-[15px] shadow-sm active:scale-95"
+        >
+          Mulai Simulasi
+        </Link>
+      </div>
     </nav>
   );
 };

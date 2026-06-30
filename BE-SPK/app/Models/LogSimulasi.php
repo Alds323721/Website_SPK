@@ -11,10 +11,15 @@ class LogSimulasi extends Model
 
     protected $table = 'log_simulasis';
 
-    protected $fillable = ['executed_at', 'ranking_data'];
+    protected $fillable = ['user_id', 'executed_at', 'ranking_data'];
 
     protected $casts = [
         'executed_at' => 'datetime',
         'ranking_data' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

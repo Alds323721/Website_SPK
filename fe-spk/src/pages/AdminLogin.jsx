@@ -27,60 +27,73 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-surface-black overflow-hidden">
-      <div className="hidden lg:flex lg:w-1/2 bg-ink items-center justify-center relative">
-        <div className="absolute inset-0 bg-primary/20 blur-3xl transform -skew-y-12 z-0"></div>
+    <div className="min-h-screen flex bg-surface-black overflow-hidden font-sans">
+      {/* Left Column (True Black) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-surface-black items-center justify-center relative border-r border-white/10">
+        {/* Removed decorative blur glows to keep the UI chrome completely flat */}
         <img 
-            src="/src/assets/images/admin-secure-auth.png" 
-            alt="Security Graphic" 
-            className="relative z-10 w-96 h-96 object-contain filter drop-shadow-[0_0_30px_rgba(0,102,204,0.5)]" 
-            onError={(e) => { e.target.style.display = 'none'; }}
+          src="/src/assets/images/admin-secure-auth.png" 
+          alt="Security Graphic" 
+          className="relative z-10 w-80 h-80 object-contain" 
+          onError={(e) => { e.target.style.display = 'none'; }}
         />
-        <div className="absolute bottom-10 left-10 text-white z-10">
-          <h2 className="text-3xl font-bold tracking-tight">Admin Portal</h2>
-          <p className="text-gray-400 mt-2">Secure access to SPK Backend</p>
+        <div className="absolute bottom-12 left-12 text-white z-10">
+          <h2 className="text-[34px] font-semibold tracking-[-0.374px] leading-tight">Admin Portal</h2>
+          <p className="text-body-muted text-[17px] mt-2">Akses aman ke sistem manajemen SPK AHP.</p>
         </div>
       </div>
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-surface-pearl">
-        <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-sm border border-gray-100">
+      
+      {/* Right Column (Parchment background with white form card) */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-canvas-parchment">
+        <div className="w-full max-w-md bg-canvas p-10 rounded-[18px] border border-hairline">
           <div className="text-center mb-10">
-            <h1 className="text-2xl font-bold text-ink">Sign In</h1>
-            <p className="text-gray-500 mt-2 text-sm">Masukkan kredensial administrator Anda</p>
+            <h1 className="text-[28px] font-semibold text-ink tracking-tight">Sign In</h1>
+            <p className="text-ink-muted-80 mt-2 text-[14px]">Masukkan kredensial administrator Anda</p>
           </div>
-          {error && <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg text-sm font-medium text-center border border-red-100">{error}</div>}
+          
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-[11px] text-[14px] font-medium text-center border border-red-100">
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-ink mb-2">Email Address</label>
+              <label className="block text-[14px] font-semibold text-ink mb-2">Email Address</label>
               <input 
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-canvas-parchment border border-transparent rounded-lg focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                className="w-full h-11 px-5 bg-canvas-parchment border border-transparent rounded-full focus:bg-canvas focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-[14px]"
                 placeholder="admin@spk.com"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-ink mb-2">Password</label>
+              <label className="block text-[14px] font-semibold text-ink mb-2">Password</label>
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 bg-canvas-parchment border border-transparent rounded-lg focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                className="w-full h-11 px-5 bg-canvas-parchment border border-transparent rounded-full focus:bg-canvas focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-[14px]"
                 placeholder="••••••••"
               />
             </div>
+            
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-blue-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-70 flex justify-center items-center"
+              className="w-full h-11 bg-primary hover:bg-primary text-white font-medium rounded-full transition-all active:scale-95 disabled:opacity-70 flex justify-center items-center text-[14px] shadow-none"
             >
               {isLoading ? 'Authenticating...' : 'Secure Login'}
             </button>
           </form>
+          
           <div className="mt-8 text-center">
-            <a href="/" className="text-sm text-gray-500 hover:text-primary transition-colors">← Kembali ke Halaman Publik</a>
+            <a href="/" className="text-[14px] text-primary hover:underline transition-colors">
+              ← Kembali ke Halaman Publik
+            </a>
           </div>
         </div>
       </div>
@@ -89,3 +102,4 @@ const AdminLogin = () => {
 };
 
 export default AdminLogin;
+

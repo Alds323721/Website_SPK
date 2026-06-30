@@ -9,7 +9,7 @@ class AlternatifController extends Controller
 {
     public function index()
     {
-        return response()->json(Alternatif::all());
+        return response()->json(Alternatif::where('user_id', auth()->id())->get());
     }
 
     public function store(Request $request)
@@ -25,17 +25,25 @@ class AlternatifController extends Controller
             'nilai_portofolio' => 'required|numeric|min:1|max:5',
         ]);
 
+        $validated['user_id'] = auth()->id();
         $alternatif = Alternatif::create($validated);
         return response()->json($alternatif, 201);
     }
 
     public function show(Alternatif $alternatif)
     {
+        if ($alternatif->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         return response()->json($alternatif);
     }
 
     public function update(Request $request, Alternatif $alternatif)
     {
+        if ($alternatif->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'kontak' => 'nullable|string|max:255',
@@ -53,13 +61,16 @@ class AlternatifController extends Controller
 
     public function destroy(Alternatif $alternatif)
     {
+        if ($alternatif->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         $alternatif->delete();
         return response()->json(['message' => 'Deleted successfully']);
     }
     
     public function exportCsv()
     {
-        $alternatifs = Alternatif::all();
+        $alternatifs = Alternatif::where('user_id', auth()->id())->get();
         $csvData = "ID,Nama,Kontak,Deskripsi,Nilai UI/UX,Nilai Biaya,Nilai Keamanan,Nilai Waktu,Nilai Portofolio\n";
         
         foreach ($alternatifs as $row) {

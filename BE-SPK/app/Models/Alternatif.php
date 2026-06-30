@@ -12,7 +12,7 @@ class Alternatif extends Model
     protected $table = 'alternatifs';
 
     protected $fillable = [
-        'nama', 'kontak', 'deskripsi',
+        'user_id', 'nama', 'kontak', 'deskripsi',
         'nilai_ui_ux', 'nilai_biaya', 'nilai_keamanan',
         'nilai_waktu', 'nilai_portofolio',
     ];
@@ -24,4 +24,9 @@ class Alternatif extends Model
         'nilai_waktu'      => 'float',
         'nilai_portofolio' => 'float',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

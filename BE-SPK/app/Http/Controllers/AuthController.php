@@ -9,6 +9,26 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'token' => $user->createToken('auth-token')->plainTextToken,
+            'user' => $user
+        ], 201);
+    }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -25,7 +45,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'token' => $user->createToken('admin-token')->plainTextToken,
+            'token' => $user->createToken('auth-token')->plainTextToken,
             'user' => $user
         ]);
     }

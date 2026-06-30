@@ -13,7 +13,7 @@ const api = axios.create({
 
 // Interceptor untuk menyisipkan token secara otomatis ke setiap request (jika ada)
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin-token');
+  const token = localStorage.getItem('auth-token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

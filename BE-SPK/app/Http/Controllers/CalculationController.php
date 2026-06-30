@@ -22,34 +22,55 @@ class CalculationController extends Controller
         // Accept optional custom weights from frontend
         $weights = $request->input('custom_weights', $this->weights);
         
+        // 1. Normalisasi Bobot Kriteria agar totalnya pasti = 1.0
+        $totalWeight = array_sum($weights);
+        if ($totalWeight > 0) {
+            foreach ($weights as $key => $weight) {
+                $weights[$key] = $weight / $totalWeight;
+            }
+        }
+
         // Accept optional custom alternatives, or fetch from DB
         $alternatifs = $request->input('alternatifs');
         if (!$alternatifs || count($alternatifs) === 0) {
-            $alternatifs = Alternatif::all()->toArray();
+            $alternatifs = Alternatif::where('user_id', auth()->id())->get()->toArray();
         }
 
         if (count($alternatifs) === 0) {
             return response()->json(['message' => 'No alternatives to calculate.'], 400);
         }
 
-        // AHP Normalization process
-        // Benefit criteria: value / max_value
-        // Cost criteria: min_value / value
-        $maxUiUx = max(array_column($alternatifs, 'nilai_ui_ux'));
-        $minBiaya = min(array_column($alternatifs, 'nilai_biaya'));
-        $maxKeamanan = max(array_column($alternatifs, 'nilai_keamanan'));
-        $minWaktu = min(array_column($alternatifs, 'nilai_waktu'));
-        $maxPortofolio = max(array_column($alternatifs, 'nilai_portofolio'));
+        // 2. Proses Hitung Total per Kriteria (AHP Murni)
+        // Benefit criteria: sum(value)
+        // Cost criteria: sum(1 / value)
+        $sumUiUx = 0;
+        $sumKeamanan = 0;
+        $sumPortofolio = 0;
+        $sumInvBiaya = 0;
+        $sumInvWaktu = 0;
+
+        foreach ($alternatifs as $alt) {
+            $sumUiUx += $alt['nilai_ui_ux'];
+            $sumKeamanan += $alt['nilai_keamanan'];
+            $sumPortofolio += $alt['nilai_portofolio'];
+            $sumInvBiaya += $alt['nilai_biaya'] > 0 ? (1 / $alt['nilai_biaya']) : 0;
+            $sumInvWaktu += $alt['nilai_waktu'] > 0 ? (1 / $alt['nilai_waktu']) : 0;
+        }
 
         $results = [];
 
+        // 3. Normalisasi Nilai Alternatif dan Sintesis Skor Akhir
         foreach ($alternatifs as $alt) {
-            $normUiUx = $maxUiUx > 0 ? $alt['nilai_ui_ux'] / $maxUiUx : 0;
-            $normBiaya = $alt['nilai_biaya'] > 0 ? $minBiaya / $alt['nilai_biaya'] : 0;
-            $normKeamanan = $maxKeamanan > 0 ? $alt['nilai_keamanan'] / $maxKeamanan : 0;
-            $normWaktu = $alt['nilai_waktu'] > 0 ? $minWaktu / $alt['nilai_waktu'] : 0;
-            $normPortofolio = $maxPortofolio > 0 ? $alt['nilai_portofolio'] / $maxPortofolio : 0;
+            // Benefit: value / total_value
+            $normUiUx = $sumUiUx > 0 ? $alt['nilai_ui_ux'] / $sumUiUx : 0;
+            $normKeamanan = $sumKeamanan > 0 ? $alt['nilai_keamanan'] / $sumKeamanan : 0;
+            $normPortofolio = $sumPortofolio > 0 ? $alt['nilai_portofolio'] / $sumPortofolio : 0;
+            
+            // Cost: (1 / value) / total_inv_value
+            $normBiaya = ($alt['nilai_biaya'] > 0 && $sumInvBiaya > 0) ? ((1 / $alt['nilai_biaya']) / $sumInvBiaya) : 0;
+            $normWaktu = ($alt['nilai_waktu'] > 0 && $sumInvWaktu > 0) ? ((1 / $alt['nilai_waktu']) / $sumInvWaktu) : 0;
 
+            // Skor Akhir (Sintesis)
             $score = ($normUiUx * $weights['ui_ux']) +
                      ($normBiaya * $weights['biaya']) +
                      ($normKeamanan * $weights['keamanan']) +
@@ -76,6 +97,7 @@ class CalculationController extends Controller
 
         // Save Log
         $log = LogSimulasi::create([
+            'user_id' => auth()->id(),
             'ranking_data' => $results
         ]);
 
@@ -88,6 +110,6 @@ class CalculationController extends Controller
     
     public function getLogs()
     {
-        return response()->json(LogSimulasi::orderBy('id', 'desc')->get());
+        return response()->json(LogSimulasi::where('user_id', auth()->id())->orderBy('id', 'desc')->get());
     }
 }

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('log_simulasis', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamp('executed_at')->useCurrent();
             $table->json('ranking_data');
             $table->timestamps();
